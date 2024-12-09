@@ -5,8 +5,16 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-app.use(cors());
 app.use(express.json()); // Middleware to parse JSON data
+// CORS configuration
+const corsOptions = {
+  origin: ['http://localhost:3000'], // Allow requests from localhost
+  methods: ['GET', 'POST', 'OPTIONS'], // Specify allowed methods
+  allowedHeaders: ['Content-Type'], // Specify allowed headers
+};
+
+app.use(cors(corsOptions));
+
 
 // Replace <db_password> with your actual database password
 const uri = "mongodb+srv://alambadaniell:Alambata5@clusterlearndemo.x9elc.mongodb.net/?retryWrites=true&w=majority&appName=ClusterLearnDemo";
