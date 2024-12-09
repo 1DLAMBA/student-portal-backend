@@ -1,16 +1,16 @@
 const express = require("express");
 const http = require("http");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const cors = require("cors");
-const { message } = require("prompt");
 require("dotenv").config();
-const { ObjectId } = require("mongodb");
 
 const app = express();
 app.use(cors());
 app.use(express.json()); // Middleware to parse JSON data
 
-const uri = process.env.MONGO_URI;
+// Replace <db_password> with your actual database password
+const uri = "mongodb+srv://alambadaniell:Alambata5@clusterlearndemo.x9elc.mongodb.net/?retryWrites=true&w=majority&appName=ClusterLearnDemo";
+
 const client = new MongoClient(uri);
 
 let db;
@@ -23,43 +23,41 @@ async function connectDB() {
     console.log("Connected to MongoDB");
 
     // Initialize database and collection
-    db = client.db("student");
-    bioDataCollection = db.collection("bioData");
+    db = client.db("student"); // Use your database name
+    bioDataCollection = db.collection("bioData"); // Use your collection name
 
     // Start the server
-    http
-      .createServer(async function (req, res) {
-        if (req.url === "/" && req.method === "GET") {
-          const bioData = await bioDataCollection.find().toArray(); // Fetch all documents
-          res.writeHead(200, { "Content-Type": "application/json" });
-          res.write(JSON.stringify(bioData)); // Serialize documents as JSON
-          res.end();
-        } else {
-          res.writeHead(404, { "Content-Type": "text/plain" });
-          res.end("Not Found");
-        }
-      })
-      .listen(4000, () => {
-        console.log("Server is running on http://localhost:5000");
-      });
+    app.listen(4000, () => {
+      console.log("Server is running on http://localhost:4000");
+    });
   } catch (err) {
     console.error("Error connecting to MongoDB:", err.message);
+    process.exit(1); // Exit the process if unable to connect
   }
 }
-
 
 connectDB();
 
 // API Routes
-// 0 STUDENT CHECK
+// 1. Home Route
+app.get("/", async (req, res) => {
+  try {
+    const bioData = await bioDataCollection.find().toArray(); // Fetch all documents
+    res.status(200).json(bioData); // Return documents as JSON
+  } catch (err) {
+    console.error("Error fetching bioData:", err.message);
+    res.status(500).json({ message: "Failed to fetch bioData" });
+  }
+});
+
+// 2. Student Check
 app.post("/api/student_check", async (req, res) => {
   try {
-    // Extract the email from the request body
     const { application_number } = req.body;
-    console.log("Email received:", application_number);
+    console.log("Application number received:", application_number);
 
-    // Search for a document where the email matches
-    const result = await bioDataCollection.findOne({ application_number: application_number });
+    // Search for a document where the application_number matches
+    const result = await bioDataCollection.findOne({ application_number });
 
     if (result) {
       res.status(200).json({ message: "Student email FOUND", id: result });
