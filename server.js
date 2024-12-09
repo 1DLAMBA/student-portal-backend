@@ -17,25 +17,37 @@ let db;
 let bioDataCollection;
 
 // Connect to MongoDB
+// async function connectDB() {
+//   try {
+//     await client.connect();
+//     console.log("Connected to MongoDB");
+
+//     // Initialize database and collection
+//     db = client.db("student"); // Use your database name
+//     bioDataCollection = db.collection("bioData"); // Use your collection name
+
+//     // Start the server
+//     app.listen(4000, () => {
+//       console.log("Server is running on http://localhost:4000");
+//     });
+//   } catch (err) {
+//     console.error("Error connecting to MongoDB:", err.message);
+//     process.exit(1); // Exit the process if unable to connect
+//   }
+// }
+
+
 async function connectDB() {
   try {
     await client.connect();
     console.log("Connected to MongoDB");
-
-    // Initialize database and collection
-    db = client.db("student"); // Use your database name
-    bioDataCollection = db.collection("bioData"); // Use your collection name
-
-    // Start the server
-    app.listen(4000, () => {
-      console.log("Server is running on http://localhost:4000");
-    });
+    db = client.db("student");
+    bioDataCollection = db.collection("bioData");
   } catch (err) {
     console.error("Error connecting to MongoDB:", err.message);
-    process.exit(1); // Exit the process if unable to connect
+    process.exit(1);
   }
 }
-
 connectDB();
 
 // API Routes
